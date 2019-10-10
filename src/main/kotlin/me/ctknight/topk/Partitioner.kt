@@ -15,21 +15,27 @@ class Partitioner(
       dstPath.deleteRecursively()
     }
 
-    val desFiles = IntRange(0, partitionNum).map {
+    val desFiles = IntRange(0, partitionNum - 1).map {
       File("$dstPath/$it.txt").also { file ->
         while (!file.createNewFile()) {
           file.delete()
         }
       }
     }
+
     val writers = desFiles.map { it.bufferedWriter() }
-    srcPath.listFiles()?.forEach {
+    srcPath.listFiles()?.filter { it.isFile }?.forEach { file ->
       executor.submit {
-        it.forEachLine { url ->
-          val index = assignBucket(url)
-          val writer = writers[index]
+        try {
+          file.forEachLine { url ->
+            val index = assignBucket(url)
+            val writer = writers[index]
 //          already thread-safe
-          writer.append(url + "\n")
+            writer.append(url + "\n")
+          }
+        } catch (e: Exception) {
+          e.printStackTrace()
+          throw e
         }
       }
     }
@@ -38,5 +44,11 @@ class Partitioner(
     writers.forEach { it.close() }
   }
 
-  private fun assignBucket(url: String): Int = url.hashCode() % partitionNum
+  private fun assignBucket(url: String): Int {
+    var initIndex = url.hashCode() % partitionNum
+    if (initIndex < 0) {
+      initIndex += partitionNum
+    }
+    return initIndex
+  }
 }

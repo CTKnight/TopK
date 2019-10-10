@@ -3,10 +3,10 @@ package me.ctknight.topk
 import java.io.File
 
 fun main() {
-    testPartition()
+  testPartition()
 }
 
 fun testPartition() {
-    val partitioner = Partitioner(File("./test/src/"), File("./test/dst"), 50)
-    partitioner.partition()
+  val partitioner = Partitioner(File("./test/src/"), File("./test/dst"), 50)
+  partitioner.partition()
 }

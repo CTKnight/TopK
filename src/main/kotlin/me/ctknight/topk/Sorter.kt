@@ -1,11 +1,16 @@
 package me.ctknight.topk
 
 import java.io.File
-import java.lang.Exception
 import java.util.PriorityQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import java.util.function.Function
+import kotlin.Comparator
+import kotlin.Int
+import kotlin.Pair
+import kotlin.String
+import kotlin.assert
+import kotlin.require
+import kotlin.synchronized
 
 class Sorter(
   private val srcPath: File,
@@ -58,7 +63,7 @@ class Sorter(
       }
     }
     executor.shutdown()
-    executor.awaitTermination(300, TimeUnit.MINUTES)
+    while(!executor.awaitTermination(300, TimeUnit.SECONDS)){}
     assert(globalMinHeap.size <= k) { "heap size > k" }
     while (!globalMinHeap.isEmpty()) {
       result.add(globalMinHeap.poll())

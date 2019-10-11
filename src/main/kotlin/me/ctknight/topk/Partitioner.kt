@@ -41,7 +41,7 @@ class Partitioner(
       }
     }
     executor.shutdown()
-    executor.awaitTermination(5, TimeUnit.MINUTES)
+    while (!executor.awaitTermination(300, TimeUnit.SECONDS)){}
     writers.forEach { it.close() }
   }
 

@@ -4,6 +4,9 @@ import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
+/**
+ * Partition URLs into files of partitionNum (hopefully evenly)
+ */
 class Partitioner(
   private val srcPath: File,
   private val dstPath: File,
@@ -45,6 +48,10 @@ class Partitioner(
     writers.forEach { it.close() }
   }
 
+  /**
+   * Quick workaround for Kotlin rem
+   * (A negative hash gives negative index if not doing so)
+   */
   private fun assignBucket(url: String): Int {
     var initIndex = url.hashCode() % partitionNum
     if (initIndex < 0) {

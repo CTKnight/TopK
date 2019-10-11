@@ -5,13 +5,10 @@ import java.util.PriorityQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.Comparator
-import kotlin.Int
-import kotlin.Pair
-import kotlin.String
-import kotlin.assert
-import kotlin.require
-import kotlin.synchronized
 
+/**
+ * An Nlog(k) / concurrency Sorter
+ */
 class Sorter(
   private val srcPath: File,
   private val concurrency: Int,
@@ -21,10 +18,12 @@ class Sorter(
     val result = mutableListOf<Pair<String, Int>>()
     require(!(!srcPath.exists() || !srcPath.isDirectory)) { "Input srcPath is not valid dir" }
     val executor = Executors.newFixedThreadPool(concurrency)
+//    final result
     val globalMinHeap = makeHeap(k)
 
     srcPath.listFiles()?.filter { it.isFile }?.forEach { file ->
       executor.submit {
+        //        local result per file
         val localMinHeap = makeHeap(k)
         val hashMap = hashMapOf<String, Int>()
         try {
@@ -43,6 +42,7 @@ class Sorter(
             }
           }
           assert(localMinHeap.size <= k)
+//          merge into global heap
           synchronized(globalMinHeap) {
             localMinHeap.forEach {
               if (globalMinHeap.size < k) {
@@ -73,13 +73,16 @@ class Sorter(
   }
 
   companion object {
+    /**
+     * A helper for creating min-heap
+     */
     private fun makeHeap(k: Int): PriorityQueue<Pair<String, Int>> =
-        PriorityQueue(k, Comparator { lhs, rhs ->
-          return@Comparator if (lhs.second != rhs.second) {
-            lhs.second - rhs.second
-          } else {
-            lhs.first.compareTo(rhs.first, true)
-          }
-        })
+      PriorityQueue(k, Comparator { lhs, rhs ->
+        return@Comparator if (lhs.second != rhs.second) {
+          lhs.second - rhs.second
+        } else {
+          lhs.first.compareTo(rhs.first, true)
+        }
+      })
   }
 }

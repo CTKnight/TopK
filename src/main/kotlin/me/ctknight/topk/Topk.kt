@@ -12,9 +12,9 @@ class Topk {
     @JvmStatic
     fun main(args: Array<String>) {
 
-      val genTime =
-          measureTimeMillis { generateTestFile("../test/src/", 10_000, 1_000_000, genUrl()) }
-      println("Generate test file time: $genTime ms")
+//      val genTime =
+//          measureTimeMillis { generateTestFile("../test/src/", 10_000, 1_000_000, genUrl()) }
+//      println("Generate test file time: $genTime ms")
       val partitionOutputDir = File("../test/dst")
       val inputDir = File("../test/src/")
       val partitioner = Partitioner(inputDir, partitionOutputDir, 500)

@@ -7,10 +7,11 @@ import java.util.concurrent.TimeUnit
 class Partitioner(
   private val srcPath: File,
   private val dstPath: File,
-  private val partitionNum: Int
+  private val partitionNum: Int,
+  private val concurrency: Int = Runtime.getRuntime().availableProcessors()
 ) {
   fun partition() {
-    val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
+    val executor = Executors.newFixedThreadPool(concurrency)
     while (!dstPath.mkdirs()) {
       dstPath.deleteRecursively()
     }

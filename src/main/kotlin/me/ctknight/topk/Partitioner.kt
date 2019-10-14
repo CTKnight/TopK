@@ -13,8 +13,13 @@ class Partitioner(
   private val partitionNum: Int,
   private val concurrency: Int = Runtime.getRuntime().availableProcessors()
 ) {
+  /**
+   * partition all of the urls into new files
+   */
   fun partition() {
     val executor = Executors.newFixedThreadPool(concurrency)
+
+//    setup the file storage
     while (!dstPath.mkdirs()) {
       dstPath.deleteRecursively()
     }
@@ -32,6 +37,7 @@ class Partitioner(
       executor.submit {
         try {
           file.forEachLine { url ->
+            //            get the file to write
             val index = assignBucket(url)
             val writer = writers[index]
 //          already thread-safe

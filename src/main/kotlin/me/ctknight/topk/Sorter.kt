@@ -32,6 +32,7 @@ class Sorter(
             hashMap[it] = count + 1
           }
           hashMap.forEach { (url, cnt) ->
+            //            ensuring top-k in local heap
             if (localMinHeap.size >= k) {
               if (localMinHeap.peek().second < cnt) {
                 localMinHeap.poll()
@@ -48,6 +49,7 @@ class Sorter(
               if (globalMinHeap.size < k) {
                 globalMinHeap.offer(it)
               } else {
+//                replace if the new url is more frequent
                 if (globalMinHeap.peek().second < it.second) {
                   globalMinHeap.poll()
                   globalMinHeap.offer(it)

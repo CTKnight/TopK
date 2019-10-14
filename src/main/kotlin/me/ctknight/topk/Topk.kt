@@ -1,7 +1,6 @@
 package me.ctknight.topk
 
 import java.io.File
-import java.lang.StringBuilder
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
@@ -17,7 +16,7 @@ class Topk {
 //      println("Generate test file time: $genTime ms")
       val partitionOutputDir = File("../test/dst")
       val inputDir = File("../test/src/")
-      val partitioner = Partitioner(inputDir, partitionOutputDir, 500)
+      val partitioner = Partitioner(inputDir, partitionOutputDir, 500, 2)
       val partitionTime = measureTimeMillis {
         println("Partition STARTED")
         partitioner.partition()
@@ -28,7 +27,7 @@ class Topk {
 
       val sortTime = measureTimeMillis {
         println("Sort STARTED")
-        val sorter = Sorter(partitionOutputDir, 8)
+        val sorter = Sorter(partitionOutputDir, 2)
         result = sorter.sort()
         println("Sort DONE")
       }
@@ -86,6 +85,7 @@ fun generateTestFile(
 //    await all tasks
   threadPoolExecutor.shutdown()
   while (!threadPoolExecutor.awaitTermination(300, TimeUnit.SECONDS)) {
+    Thread.yield()
   }
 }
 

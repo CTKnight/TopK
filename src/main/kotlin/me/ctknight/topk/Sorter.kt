@@ -63,7 +63,9 @@ class Sorter(
       }
     }
     executor.shutdown()
-    while(!executor.awaitTermination(300, TimeUnit.SECONDS)){}
+    while (!executor.awaitTermination(300, TimeUnit.SECONDS)) {
+      Thread.yield()
+    }
     assert(globalMinHeap.size <= k) { "heap size > k" }
     while (!globalMinHeap.isEmpty()) {
       result.add(globalMinHeap.poll())
